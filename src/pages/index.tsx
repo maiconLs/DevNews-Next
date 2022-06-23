@@ -1,9 +1,34 @@
-import styles from '../styles/home.module.scss'
+import { GetServerSideProps } from 'next';
 
-export default function Home() {
+interface Post {
+  id: string;
+  title: string;
+}
+
+interface HomeProps {
+  posts: Post[];
+}
+
+export default function Home({ posts }: HomeProps) {
   return (
     <div>
-      <h1>Olá Dev!</h1>
+      <h1>Posts</h1>
+      <ul>
+        {posts.map(post => (
+          <li key={post.id}>{post.title}</li>
+        ))}
+      </ul>
     </div>
   );
 }
+
+export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
+  const response = await fetch('http://localhost:3333/posts');
+  const posts = await response.json();
+
+  return {
+    props: {
+      posts,
+    },
+  };
+};
